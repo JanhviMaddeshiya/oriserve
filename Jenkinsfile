@@ -7,6 +7,7 @@ pipeline {
         DEPLOYMENT_GROUP = 'deploy-cd-1'
         APPLICATION_NAME = 'deploy-cd'
         BUCKET_NAME = 'deploy-cd'
+        VENV_DIR = 'venv'
     }
 
     stages {
@@ -19,17 +20,16 @@ pipeline {
         stage('Set Up Virtual Environment') {
             steps {
                 script {
-                    sh 'python3 -m venv $VENV_DIR'
+                    sh 'python3 -m venv $VENV_DIR'  // Create the virtual environment
                     sh '$VENV_DIR/bin/pip install --upgrade pip'  // Upgrade pip to the latest version
                 }
             }
         }
-
         
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh '$VENV_DIR/bin/pip install -r requirements.txt'
+                    sh '$VENV_DIR/bin/pip install -r requirements.txt'  // Install dependencies in the virtual environment
                 }
             }
         }
