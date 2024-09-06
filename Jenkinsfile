@@ -15,13 +15,21 @@ pipeline {
                 checkout scm
             }
         }
-        
-        stage('Build') {
+
+        stage('Set Up Virtual Environment') {
             steps {
-                // Install dependencies and run tests
                 script {
-                    sh 'pip install -r requirements.txt'
-                    //sh 'pytest'
+                    sh 'python3 -m venv $VENV_DIR'
+                    sh '$VENV_DIR/bin/pip install --upgrade pip'  // Upgrade pip to the latest version
+                }
+            }
+        }
+
+        
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh '$VENV_DIR/bin/pip install -r requirements.txt'
                 }
             }
         }
