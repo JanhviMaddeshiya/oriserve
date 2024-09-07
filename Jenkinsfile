@@ -1,73 +1,37 @@
 pipeline {
     agent any
 
-    environment {
-        // Define your AWS region and other environment variables
-        AWS_REGION = 'us-east-1'
-        DEPLOYMENT_GROUP = 'deploy-cd-1'
-        APPLICATION_NAME = 'deploy-cd'
-        BUCKET_NAME = 'deploy-cd'
-        VENV_DIR = 'venv'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm
+                git 'https://github.com/JanhviMaddeshiya/oriserve.git'
             }
         }
 
-        stage('Set Up Virtual Environment') {
+        stage('Set up Python Environment') {
             steps {
-                script {
-                    sh 'python3 -m venv $VENV_DIR'  // Create the virtual environment
-                    sh '$VENV_DIR/bin/pip install --upgrade pip'  // Upgrade pip to the latest version
-                }
-            }
-        }
-        
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    sh '$VENV_DIR/bin/pip install -r requirements.txt'  // Install dependencies in the virtual environment
-                }
-            }
-        }
-        
-        stage('Package') {
-            steps {
-                // Package your application
-                script {
-                    sh 'zip -r myapp.zip .'
-                }
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install -r requirements.txt
+                '''
             }
         }
 
-        stage('Upload to S3') {
-            steps {
-                script {
-                    // Upload the package to S3
-                    sh 'aws s3 cp myapp.zip s3://$BUCKET_NAME/myapp.zip --region $AWS_REGION'
-                }
-            }
-        }
-        
-        stage('Deploy to AWS CodeDeploy') {
-            steps {
-                script {
-                    // Trigger a deployment
-                    sh 'aws deploy create-deployment --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP --s3-location bucket=$BUCKET_NAME,key=myapp.zip,bundleType=zip --region $AWS_REGION'
-                }
-            }
-        }
     }
-    
+
     post {
-        success {
-            echo 'Deployment successful!'
+        always {
+            // Clean up the workspace after the build
+            cleanWs()
         }
+
+        success {
+            echo 'Build completed successfully!'
+        }
+
         failure {
-            echo 'Deployment failed!'
+            echo 'Build failed!'
         }
     }
 }
