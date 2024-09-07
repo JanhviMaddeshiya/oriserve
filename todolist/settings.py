@@ -25,8 +25,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-SECURE_SSL_REDIRECT = True
-
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Application definition
