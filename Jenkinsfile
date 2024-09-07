@@ -8,6 +8,13 @@ pipeline {
             }
         }
 
+        stage('Clone Repository') {
+            steps {
+                // Pull the latest code from the GitHub repository
+                git branch: 'main', url: 'https://github.com/JanhviMaddeshiya/oriserve.git'
+            }
+        }
+
         stage('Set up Python Environment') {
             steps {
                 sh '''
