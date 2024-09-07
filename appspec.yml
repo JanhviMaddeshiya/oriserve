@@ -1,14 +1,17 @@
 version: 0.0
 os: linux
 files:
-  - source: /myapp.zip
+  - source: /
     destination: /opt/codedeploy-agent/deployment-root/${deploymentId}/deployment-archive/
 hooks:
-  AfterInstall:
-    - location: scripts/install_dependencies.sh
+  BeforeInstall:
+    - location: scripts/cleanup.sh
       timeout: 300
       runas: root
-  ApplicationStart:
+  AfterInstall:
+    - location: scripts/migrate.sh
+      timeout: 300
+      runas: root
     - location: scripts/start_server.sh
       timeout: 300
       runas: root
