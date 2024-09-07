@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /opt/codedeploy-agent/deployment-root/${deploymentId}/deployment-archive/
+    destination: /var/www/myapp/
 hooks:
   BeforeInstall:
     - location: scripts/cleanup.sh
